@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">{{titlemodule}}</h4>
+                <h4 class="modal-title" id="heder{{id}}">{{titlemodule}}</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <form method="{{method}}" action="{{action}}" id="{{idForm}}">
@@ -11,7 +11,7 @@
                     <div class="form-group">
                         {{#each estructura}}
                             <label for="cont_{{this.tag}}" class="control-label">{{this.ref}}:</label>
-                            <input type="text" class="form-control" name='tag_{{this.tag}}' id="cont_{{this.tag}}" required>
+                            <input type="text" class="form-control" name='tag_{{this.tag}}' id="cont_{{this.tag}}_{{this.idForm}}" required>
                         {{/each}}
                     </div>
                 </div>
@@ -24,29 +24,3 @@
     </div>
 </div>
 <!-- /.modal -->
-
-<script>
-    document.getElementById("{{idForm}}").addEventListener("submit", function(e){
-        e.preventDefault();
-        let data = {};
-        for(const [key, value] of new FormData(this).entries())
-            data[key] = value
-
-        const options = {
-            'body' : JSON.stringify(data),
-            'method' : this.method,
-            'headers' : { 'Content-Type': 'application/json' }
-        };
-
-        fetch(this.action, options)
-            .then(function(res) {
-                if(res.ok)
-                    return res.json();
-
-                return false;
-            })
-            .then(function(json) {
-                console.log(json);
-            });
-    });
-</script>

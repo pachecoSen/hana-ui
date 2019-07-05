@@ -12,21 +12,30 @@ module.exports = app => {
                 return res.json({ 'estatus' : false, err });
 
             const { data } = datas;
-            const col = ['CODIGO', 'NOMBRES', 'LUGAR DE NACIMIENTO', 'FECHA DE NACIMIENTO', 'DIRECCION', 'TELEFONO', 'PUESTO', 'ESTADO'];
+            const col = ['NOMBRES', 'LUGAR DE NACIMIENTO', 'FECHA DE NACIMIENTO', 'DIRECCION', 'TELEFONO', 'PUESTO', 'TAREAS'];
             const form = [
-                {'ref' : 'Codigo', 'tag' : 'codigo'},
-                {'ref' : 'Nombre', 'tag' : 'nombre'},
-                {'ref' : 'Lugar de nacimiento', 'tag' : 'lugar'},
-                {'ref' : 'Fecha de nacimiento', 'tag' : 'fecha'},
-                {'ref' : 'Direccion', 'tag' : 'direccion'},
-                {'ref' : 'Telefono', 'tag' : 'tel'},
-                {'ref' : 'Puesto', 'tag' : 'puesto'},
-                {'ref' : 'Estado', 'tag' : 'est'}
+                {'ref' : 'Nombre', 'tag' : 'nombre', 'idForm' : 'formNew'},
+                {'ref' : 'Lugar de nacimiento', 'tag' : 'lugar', 'idForm' : 'formNew'},
+                {'ref' : 'Fecha de nacimiento', 'tag' : 'fecha', 'idForm' : 'formNew'},
+                {'ref' : 'Direccion', 'tag' : 'direccion', 'idForm' : 'formNew'},
+                {'ref' : 'Telefono', 'tag' : 'tel', 'idForm' : 'formNew'},
+                {'ref' : 'Puesto', 'tag' : 'puesto', 'idForm' : 'formNew'}
+            ];
+
+            const formDos = [
+                {'ref' : 'Nombre', 'tag' : 'nombre', 'idForm' : 'formChanger'},
+                {'ref' : 'Lugar de nacimiento', 'tag' : 'lugar', 'idForm' : 'formChanger'},
+                {'ref' : 'Fecha de nacimiento', 'tag' : 'fecha', 'idForm' : 'formChanger'},
+                {'ref' : 'Direccion', 'tag' : 'direccion', 'idForm' : 'formChanger'},
+                {'ref' : 'Telefono', 'tag' : 'tel', 'idForm' : 'formChanger'},
+                {'ref' : 'Puesto', 'tag' : 'puesto', 'idForm' : 'formChanger'}
             ];
 
             const action = `${ host }/new`;
+            const eraseUrl = `${ host }/lock`;
+            const changerUrl = `${ host }/changer`;
 
-            return res.render('home', {'title' : 'Home', col, data, form, action });
+            return res.render('home', {'title' : 'Home', col, data, form, action, eraseUrl, changerUrl, formDos });
         });
     });
 };

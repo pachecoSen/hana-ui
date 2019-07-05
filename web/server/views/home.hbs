@@ -16,7 +16,7 @@
                             <button type="button" class="btn btn-info" data-toggle="modal" data-target="#modualForm"><i class="fa fa-address-card-o" aria-hidden="true"></i> Create New</button>
                         </div>
                         <hr>
-                        <table class="tablesaw table-striped table-hover table-bordered table" data-tablesaw-mode="columntoggle">
+                        <table class="tablesaw table-striped table-hover table-bordered table" data-tablesaw-mode="columntoggle" id="tableEmpleado">
                             <thead>
                                 <tr>
                                     {{#each col}}
@@ -27,14 +27,18 @@
                             <tbody>
                                 {{#each data}}
                                     <tr>
-                                        <td class="title"><a class="link" href="javascript:void(0)">{{this.CODIGO}}</a></td>
-                                        <td>{{this.NOMBRES}}</td>
+                                        <td class="title"><a class="link" href="javascript:void(0)">{{this.NOMBRES}}</a></td>
                                         <td>{{this.LUGAR_NACIMIENTO}}</td>
                                         <td>{{this.FECHA_NACIMIENTO}}</td>
                                         <td>{{this.DIRECCION}}</td>
                                         <td>{{this.TELEFONO}}</td>
                                         <td>{{this.PUESTO}}</td>
-                                        <td>{{this.ESTADO}}</td>
+                                        <td class="text-center">
+                                            <div class="btn-group" role="group" aria-label="Basic example">
+                                                <button data-toggle="modal" data-target="#modualFormDos" data-puesto="{{this.PUESTO}}" data-tel="{{this.TELEFONO}}" data-dir="{{this.DIRECCION}}" data-id="{{this.ID}}" data-name="{{this.NOMBRES}}" data-lugar="{{this.LUGAR_NACIMIENTO}}" data-fecha="{{this.FECHA_NACIMIENTO}}" type="button" class="btn btn-warning chaElemen"><i class="fa fa-edit"></i></button>
+                                                <button type="button" class="btn btn-danger eraElemento" data-id="{{this.ID}}"><i class="fa fa-trash-o"></i></button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 {{/each}}
                             </tbody>
@@ -46,6 +50,8 @@
     </div>
 
     {{> modual id='modualForm' titlemodule='Nuevo Empleado' estructura=form method='post' action=action idForm='formNew' }}
+
+    {{> modual id='modualFormDos' titlemodule='Actualizar empleado' estructura=formDos method='post' action=changerUrl idForm='formChanger' }}
 
     <script src="./assets/jquery/jquery.min.js"></script>
     <!-- Bootstrap tether Core JavaScript -->
@@ -69,5 +75,139 @@
     <!-- Style switcher -->
     <!-- ============================================================== -->
     <script src="./assets/styleswitcher/jQuery.style.switcher.js"></script>
+
+    <script>
+        var btnCHanger = document.getElementsByClassName("chaElemen");
+        for(var y=0; y < btnCHanger.length; y++){
+            btnCHanger[y].onclick = function(){
+                var ele = this;
+
+                let id = ele.dataset.id;
+                let puesto = ele.dataset.puesto;
+                let tel = ele.dataset.tel;
+                let direccion = ele.dataset.dir;
+                let nombre = ele.dataset.name;
+                let lugar = ele.dataset.lugar;
+                let fecha = ele.dataset.fecha;
+
+                let hederMOdual = document.getElementById("hedermodualFormDos");
+                hederMOdual.innerHTML = "Actualizar empleado - " + nombre;
+                
+                {{#each form}}
+                    document.getElementById("cont_{{this.tag}}_formChanger").value = {{this.tag}};
+                {{/each}}
+
+                let url = document.getElementById("formChanger").action;
+                url += "/"+id;
+                document.getElementById("formChanger").action = url;
+            }
+        }
+    </script>
+
+    <script>
+        document.getElementById("formChanger").addEventListener("submit", function(e){
+            e.preventDefault();
+            var formThis = this;
+
+            var data = {};
+            for(const [key, value] of new FormData(formThis).entries())
+                data[key] = value
+
+            const options = {
+                'body' : JSON.stringify(data),
+                'method' : formThis.method,
+                'headers' : { 'Content-Type': 'application/json' }
+            };
+
+            fetch(this.action, options)
+                .then(function(res) {
+                    if(res.ok)
+                        return res.json();
+
+                    return false;
+                })
+                .then(function(json) {
+                    if(1 === json.data){
+                        alert("Almacenados Correctamente");
+                        location.reload();
+
+                        return false;
+                    }
+
+                    alert("Error al procesar los datos");
+                });
+        });
+    </script>
+
+    <script>
+        var btnEra = document.getElementsByClassName("eraElemento");
+        for(var i=0; i < btnEra.length; i++){
+            btnEra[i].onclick = function (){
+                var ele = this;
+                let id = ele.dataset.id;
+                const options = { 'method' : "get", };
+                fetch("{{eraseUrl}}/"+id,options)
+                    .then(function(res) {
+                        if(res.ok)
+                            return res.json();
+
+                        return false;
+                    })
+                    .then(function(json){
+                        if(1 === json.data){
+                            alert("Empleado Elimnado");
+                            location.reload();
+
+                            return false;
+                        }
+
+                        alert("Error al procesar los datos");
+                    });
+            }
+        }
+    </script>
+
+    <script>
+        document.getElementById("formNew").addEventListener("submit", function(e){
+            e.preventDefault();
+            var formThis = this;
+
+            var data = {};
+            for(const [key, value] of new FormData(formThis).entries())
+                data[key] = value
+
+            const options = {
+                'body' : JSON.stringify(data),
+                'method' : formThis.method,
+                'headers' : { 'Content-Type': 'application/json' }
+            };
+
+            fetch(this.action, options)
+                .then(function(res) {
+                    if(res.ok)
+                        return res.json();
+
+                    return false;
+                })
+                .then(function(json) {
+                    if(1 === json.data){
+                        alert("Almacenados Correctamente");
+                        formThis.reset();
+                        let fila = "<td>"+data.tag_nombre+"</td>";
+                        fila += "<td>"+data.tag_lugar+"</td>";
+                        fila += "<td>"+data.tag_fecha+"</td>";
+                        fila += "<td>"+data.tag_direccion+"</td>";
+                        fila += "<td>"+data.tag_tel+"</td>";
+                        fila += "<td>"+data.tag_puesto+"</td>";
+
+                        document.getElementById("tableEmpleado").insertRow(-1).innerHTML = fila;
+
+                        return false;
+                    }
+
+                    alert("Error al procesar los datos");
+                });
+        });
+    </script>
 </body>
 </html>
